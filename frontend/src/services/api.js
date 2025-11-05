@@ -1,18 +1,18 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = "http://localhost:8000/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 export const linkService = {
   // Get all links
   getAllLinks: async () => {
-    const response = await api.get('/links/');
+    const response = await api.get("/links/"); // make sure this matches urls.py
     return response.data;
   },
 
@@ -24,7 +24,7 @@ export const linkService = {
 
   // Create a new link
   createLink: async (linkData) => {
-    const response = await api.post('/links/', linkData);
+    const response = await api.post("/shorten/", linkData); // matches ShortURLCreateAPIView
     return response.data;
   },
 
@@ -39,7 +39,7 @@ export const linkService = {
     await api.delete(`/links/${slug}/`);
   },
 
-  // Get redirect URL (increments clicks)
+  // Get redirect URL
   getRedirectUrl: async (slug) => {
     const response = await api.get(`/redirect/${slug}/`);
     return response.data;
@@ -47,10 +47,9 @@ export const linkService = {
 
   // Get stats
   getStats: async () => {
-    const response = await api.get('/links/stats/');
+    const response = await api.get("/links/stats/");
     return response.data;
   },
 };
 
 export default api;
-
