@@ -9,7 +9,6 @@ const ShortenForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch all links from backend on mount
   useEffect(() => {
     const fetchLinks = async () => {
       try {
@@ -45,7 +44,6 @@ const ShortenForm = () => {
 
   return (
     <div>
-      {/* Input Form */}
       <form className="flex flex-col sm:flex-row gap-3" onSubmit={handleSubmit}>
         <input
           type="url"
@@ -66,47 +64,27 @@ const ShortenForm = () => {
 
       {error && <p className="text-red-500 mt-2">{error}</p>}
 
-      {/* Newly created link card */}
-      {shortURL && (
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg shadow-inner">
-          <p className="mb-2">
-            Short URL:{" "}
-            <a
-              href={`http://localhost:8000/${shortURL.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 underline"
-            >
-              http://localhost:8000/{shortURL.slug}
-            </a>
-          </p>
-          <Analytics slug={shortURL.slug} />
-        </div>
-      )}
-
       {/* Persistent Links List */}
       <div className="mt-6">
         <h2 className="font-bold mb-2 text-lg">All Links</h2>
         {Array.isArray(links) && links.length > 0 ? (
           <ul className="space-y-4">
             {links.map((link) => (
-              <li
-                key={link.slug}
-                className="p-4 border rounded-lg bg-gray-50 hover:bg-gray-100 transition"
-              >
-                <p className="mb-1">
-                  <a
-                    href={`http://localhost:8000/${link.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline"
-                  >
-                    {link.slug}
-                  </a>
-                  {" → "}
-                  {link.original_url}
-                </p>
-                <p className="text-gray-600">Clicks: {link.click_count || 0}</p>
+              <li key={link.slug}>
+                <div className="mt-6 p-4 bg-gray-50 rounded-lg shadow-inner">
+                  <p className="mb-2">
+                    Short URL:{" "}
+                    <a
+                      href={`http://localhost:8000/${link.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      http://localhost:8000/{link.slug}
+                    </a>
+                  </p>
+                  <Analytics slug={link.slug} />
+                </div>
               </li>
             ))}
           </ul>
