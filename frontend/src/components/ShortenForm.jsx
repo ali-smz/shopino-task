@@ -14,8 +14,7 @@ const ShortenForm = () => {
     const fetchLinks = async () => {
       try {
         const data = await linkService.getAllLinks();
-        console.log(data);
-        setLinks(Array.isArray(data) ? data : []);
+        setLinks(Array.isArray(data.results) ? data.results : []);
       } catch (err) {
         console.error(err);
       }

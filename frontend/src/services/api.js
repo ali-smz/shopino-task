@@ -46,8 +46,8 @@ export const linkService = {
   },
 
   // Get stats
-  getStats: async () => {
-    const response = await api.get("/links/stats/");
+  getAnalytics: async (slug) => {
+    const response = await api.get(`/analytics/${slug}/`);
     return response.data;
   },
 };
