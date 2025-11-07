@@ -1,55 +1,57 @@
+/**
+ * Base API client for making HTTP requests.
+ * Follows Single Responsibility Principle by centralizing API communication.
+ * Follows Dependency Inversion Principle by providing a base client that can be extended.
+ */
+
 import axios from "axios";
+import { API_CONFIG } from "../constants/config";
 
-const API_BASE_URL = "http://localhost:8000/api";
-
+/**
+ * Create axios instance with base configuration
+ */
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_CONFIG.BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-export const linkService = {
-  // Get all links
-  getAllLinks: async () => {
-    const response = await api.get("/links/"); // make sure this matches urls.py
-    return response.data;
+// Request interceptor for adding common headers or handling auth
+api.interceptors.request.use(
+  (config) => {
+    // Add any common request modifications here
+    return config;
   },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-  // Get a single link by slug
-  getLinkBySlug: async (slug) => {
-    const response = await api.get(`/links/${slug}/`);
-    return response.data;
-  },
-
-  // Create a new link
-  createLink: async (linkData) => {
-    const response = await api.post("/shorten/", linkData); // matches ShortURLCreateAPIView
-    return response.data;
-  },
-
-  // Update a link
-  updateLink: async (slug, linkData) => {
-    const response = await api.patch(`/links/${slug}/`, linkData);
-    return response.data;
-  },
-
-  // Delete a link
-  deleteLink: async (slug) => {
-    await api.delete(`/links/${slug}/`);
-  },
-
-  // Get redirect URL
-  getRedirectUrl: async (slug) => {
-    const response = await api.get(`/redirect/${slug}/`);
-    return response.data;
-  },
-
-  // Get stats
-  getAnalytics: async (slug) => {
-    const response = await api.get(`/analytics/${slug}/`);
-    return response.data;
-  },
-};
+// Response interceptor for handling errors globally
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle common errors here
+    if (error.response) {
+      // Server responded with error status
+      const message =
+        error.response.data?.detail ||
+        error.response.data?.message ||
+        "An error occurred";
+      return Promise.reject(new Error(message));
+    } else if (error.request) {
+      // Request made but no response received
+      return Promise.reject(
+        new Error("Network error. Please check your connection.")
+      );
+    } else {
+      // Something else happened
+      return Promise.reject(
+        new Error(error.message || "An unexpected error occurred")
+      );
+    }
+  }
+);
 
 export default api;
